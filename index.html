@@ -67,9 +67,12 @@
     body{animation:none;}
   }
   .phone-frame{
-    width:340px;
-    max-width:92%;
+    width:100%;
+    max-width:390px;
     position:relative;
+    --card-w: 320px;
+    --card-gap: 18px;
+    --peek-pad: 25px;
   }
   .card{
     position:relative;
@@ -365,14 +368,16 @@
   }
   .carousel-track{
     display:flex;
-    transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);
+    padding-left:var(--peek-pad, 0px);
+    transition:transform 0.42s cubic-bezier(0.22,0.9,0.28,1);
   }
   .carousel-track.dragging{
     transition:none;
   }
   .carousel-slide{
-    flex:0 0 100%;
-    width:100%;
+    flex:0 0 auto;
+    width:var(--card-w, 330px);
+    margin-right:var(--card-gap, 20px);
   }
   .tax-id-block{
     padding:0 24px 18px;
@@ -619,16 +624,36 @@
       }
     }
 
-    // Swipeable carousel
+    // Swipeable carousel (peek style, like Diia)
     (function(){
+      const viewport = document.querySelector('.carousel');
       const track = document.getElementById('carouselTrack');
-      const slides = track.children.length;
+      const slideEls = track.children;
+      const slides = slideEls.length;
       const dots = document.getElementById('dotsRow').children;
       let currentIndex = 0;
       let startX = 0;
-      let currentTranslate = 0;
       let dragging = false;
-      let trackWidth = track.parentElement.offsetWidth;
+      let cardWidth = 0;
+      let gap = 18;
+      let peekPad = 24;
+      let step = 0;
+
+      function layout(){
+        const viewportWidth = viewport.offsetWidth;
+        peekPad = Math.max(16, Math.min(28, viewportWidth * 0.065));
+        gap = 16;
+        cardWidth = viewportWidth - peekPad*2;
+        step = cardWidth + gap;
+        track.style.paddingLeft = peekPad + 'px';
+        for(let i=0;i<slideEls.length;i++){
+          slideEls[i].style.width = cardWidth + 'px';
+          slideEls[i].style.marginRight = gap + 'px';
+        }
+        track.classList.add('dragging');
+        track.style.transform = 'translateX(' + (-currentIndex*step) + 'px)';
+        requestAnimationFrame(function(){ track.classList.remove('dragging'); });
+      }
 
       function updateDots(){
         for(let i=0;i<dots.length;i++){
@@ -639,14 +664,12 @@
       function goTo(index){
         currentIndex = Math.max(0, Math.min(slides-1, index));
         track.classList.remove('dragging');
-        track.style.transform = 'translateX(' + (-currentIndex*trackWidth) + 'px)';
+        track.style.transform = 'translateX(' + (-currentIndex*step) + 'px)';
         updateDots();
       }
 
-      window.addEventListener('resize', function(){
-        trackWidth = track.parentElement.offsetWidth;
-        goTo(currentIndex);
-      });
+      window.addEventListener('resize', layout);
+      layout();
 
       for(let i=0;i<dots.length;i++){
         dots[i].addEventListener('click', function(){
@@ -662,14 +685,13 @@
       function onMove(x){
         if(!dragging) return;
         const delta = x - startX;
-        currentTranslate = -currentIndex*trackWidth + delta;
-        track.style.transform = 'translateX(' + currentTranslate + 'px)';
+        track.style.transform = 'translateX(' + (-currentIndex*step + delta) + 'px)';
       }
       function onEnd(x){
         if(!dragging) return;
         dragging = false;
         const delta = x - startX;
-        if(Math.abs(delta) > trackWidth*0.18){
+        if(Math.abs(delta) > step*0.2){
           goTo(currentIndex + (delta < 0 ? 1 : -1));
         } else {
           goTo(currentIndex);
