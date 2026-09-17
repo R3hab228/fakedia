@@ -639,6 +639,24 @@
       let peekPad = 24;
       let step = 0;
 
+      function matchCardHeights(){
+        const cards = track.querySelectorAll('.card-face.card');
+        let maxH = 0;
+        cards.forEach(function(c){
+          c.style.minHeight = '';
+        });
+        cards.forEach(function(c){
+          maxH = Math.max(maxH, c.offsetHeight);
+        });
+        cards.forEach(function(c){
+          c.style.minHeight = maxH + 'px';
+        });
+        const backs = track.querySelectorAll('.card-back');
+        backs.forEach(function(b){
+          b.style.minHeight = maxH + 'px';
+        });
+      }
+
       function layout(){
         const viewportWidth = viewport.offsetWidth;
         peekPad = Math.max(16, Math.min(28, viewportWidth * 0.065));
@@ -650,6 +668,7 @@
           slideEls[i].style.width = cardWidth + 'px';
           slideEls[i].style.marginRight = gap + 'px';
         }
+        matchCardHeights();
         track.classList.add('dragging');
         track.style.transform = 'translateX(' + (-currentIndex*step) + 'px)';
         requestAnimationFrame(function(){ track.classList.remove('dragging'); });
