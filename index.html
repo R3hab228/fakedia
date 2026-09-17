@@ -379,6 +379,15 @@
     width:var(--card-w, 330px);
     margin-right:var(--card-gap, 20px);
   }
+  .tax-card-front{
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+  .tax-spacer{
+    flex:1 1 auto;
+    min-height:12px;
+  }
   .tax-id-block{
     padding:0 24px 18px;
   }
@@ -419,7 +428,7 @@
     align-items:center;
     gap:10px;
     font-size:28px;
-    font-weight:700;
+    font-weight:800;
     color:var(--text-dark);
     letter-spacing:-0.5px;
   }
@@ -502,7 +511,7 @@
         <div class="carousel-slide">
           <div class="flip-scene">
             <div class="flip-inner" id="flipInner2" onclick="handleCardClick(event,'flipInner2','.more-btn, .copy-btn, [contenteditable=&quot;true&quot;]')">
-              <div class="card card-face">
+              <div class="card card-face tax-card-front">
                 <div class="card-header">
                   <h1>Картка платника<br>податків</h1>
                 </div>
@@ -514,9 +523,13 @@
                   <div class="tax-dob-value" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">05.03.1998</div>
                 </div>
 
+                <div class="tax-spacer"></div>
+
                 <div class="banner">
-                  <div class="banner-track"><span>Видано Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:35 | 16.09.2026&nbsp;•&nbsp;</span><span>Видано Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:35 | 16.09.2026&nbsp;•&nbsp;</span></div>
+                  <div class="banner-track" id="taxBannerTrack"><span id="taxBannerText1">Перевірено Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:00 | 16.09.2026&nbsp;•&nbsp;</span><span id="taxBannerText2">Перевірено Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:00 | 16.09.2026&nbsp;•&nbsp;</span></div>
                 </div>
+
+                <div class="tax-spacer tax-spacer-2"></div>
 
                 <div class="tax-bottom">
                   <div class="tax-big-number">
@@ -624,6 +637,22 @@
       }
     }
 
+    function updateTaxBannerTimestamp(){
+      const now = new Date();
+      const roundedHour = Math.floor(now.getHours()/4)*4;
+      const stamp = new Date(now.getFullYear(), now.getMonth(), now.getDate(), roundedHour, 0, 0);
+      const pad = function(n){ return String(n).padStart(2,'0'); };
+      const timeStr = pad(stamp.getHours()) + ':' + pad(stamp.getMinutes());
+      const dateStr = pad(stamp.getDate()) + '.' + pad(stamp.getMonth()+1) + '.' + stamp.getFullYear();
+      const text = 'Перевірено Державною податковою службою\u00A0•\u00A0Документ оновлено о ' + timeStr + ' | ' + dateStr + '\u00A0•\u00A0';
+      const t1 = document.getElementById('taxBannerText1');
+      const t2 = document.getElementById('taxBannerText2');
+      if(t1) t1.textContent = text;
+      if(t2) t2.textContent = text;
+    }
+    updateTaxBannerTimestamp();
+    setInterval(updateTaxBannerTimestamp, 5*60*1000);
+
     // Swipeable carousel (peek style, like Diia)
     (function(){
       const viewport = document.querySelector('.carousel');
@@ -644,12 +673,14 @@
         let maxH = 0;
         cards.forEach(function(c){
           c.style.minHeight = '';
+          c.style.height = '';
         });
         cards.forEach(function(c){
           maxH = Math.max(maxH, c.offsetHeight);
         });
         cards.forEach(function(c){
           c.style.minHeight = maxH + 'px';
+          c.style.height = maxH + 'px';
         });
         const backs = track.querySelectorAll('.card-back');
         backs.forEach(function(b){
