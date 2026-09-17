@@ -35,7 +35,7 @@
     display:flex;
     align-items:flex-start;
     justify-content:center;
-    padding:44px 16px 100px;
+    padding:90px 16px 100px;
   }
   @keyframes flowGradient{
     0%{background-position:0% 50%;}
@@ -46,19 +46,9 @@
     body{animation:none;}
   }
   .phone-frame{
-    width:390px;
-    max-width:100%;
+    width:340px;
+    max-width:92%;
     position:relative;
-  }
-  .stack-shadow{
-    position:absolute;
-    top:12px;
-    right:-10px;
-    width:96%;
-    height:calc(100% - 24px);
-    background:rgba(255,255,255,0.35);
-    border-radius:28px;
-    z-index:0;
   }
   .card{
     position:relative;
@@ -85,8 +75,8 @@
     align-items:flex-start;
   }
   .photo{
-    width:150px;
-    height:190px;
+    width:128px;
+    height:210px;
     border-radius:12px;
     background:linear-gradient(160deg,#c7c1e0,#8a83b8 70%, #6f6899);
     background-size:cover;
@@ -367,7 +357,6 @@
 <body>
 
   <div class="phone-frame">
-    <div class="stack-shadow"></div>
     <div class="flip-scene">
       <div class="flip-inner" id="flipInner" onclick="handleCardClick(event)">
         <div class="card card-face">
