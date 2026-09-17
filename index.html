@@ -177,20 +177,20 @@
     letter-spacing:-0.3px;
   }
   .more-btn{
-    width:42px;
-    height:42px;
+    width:34px;
+    height:34px;
     border-radius:50%;
     background:#1b1b1b;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:3px;
+    gap:2.5px;
     flex-shrink:0;
     margin-bottom:-8px;
   }
   .more-btn span{
-    width:4px;
-    height:4px;
+    width:3.5px;
+    height:3.5px;
     border-radius:50%;
     background:#ffffff;
     display:block;
@@ -379,6 +379,10 @@
     width:var(--card-w, 330px);
     margin-right:var(--card-gap, 20px);
   }
+  .carousel-slide:not(.slide-active) .banner-track{
+    visibility:hidden;
+    animation-play-state:paused;
+  }
   .tax-card-front{
     display:flex;
     flex-direction:column;
@@ -387,6 +391,12 @@
   .tax-spacer{
     flex:1 1 auto;
     min-height:12px;
+  }
+  .tax-spacer-1{
+    flex-grow:1.6;
+  }
+  .tax-spacer-2{
+    flex-grow:1;
   }
   .tax-id-block{
     padding:0 24px 18px;
@@ -407,13 +417,13 @@
   }
   .tax-dob-label{
     font-size:13px;
-    font-weight:650;
+    font-weight:400;
     color:var(--text-dark);
     margin-bottom:2px;
   }
   .tax-dob-value{
     font-size:15px;
-    font-weight:600;
+    font-weight:400;
     color:var(--text-dark);
   }
   .tax-bottom{
@@ -427,10 +437,10 @@
     display:flex;
     align-items:center;
     gap:10px;
-    font-size:28px;
-    font-weight:800;
+    font-size:26px;
+    font-weight:500;
     color:var(--text-dark);
-    letter-spacing:-0.5px;
+    letter-spacing:-1px;
   }
   .copy-btn{
     background:none;
@@ -523,7 +533,7 @@
                   <div class="tax-dob-value" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">05.03.1998</div>
                 </div>
 
-                <div class="tax-spacer"></div>
+                <div class="tax-spacer tax-spacer-1"></div>
 
                 <div class="banner">
                   <div class="banner-track" id="taxBannerTrack"><span id="taxBannerText1">Перевірено Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:00 | 16.09.2026&nbsp;•&nbsp;</span><span id="taxBannerText2">Перевірено Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:00 | 16.09.2026&nbsp;•&nbsp;</span></div>
@@ -700,6 +710,7 @@
           slideEls[i].style.marginRight = gap + 'px';
         }
         matchCardHeights();
+        updateActiveSlide();
         track.classList.add('dragging');
         track.style.transform = 'translateX(' + (-currentIndex*step) + 'px)';
         requestAnimationFrame(function(){ track.classList.remove('dragging'); });
@@ -711,11 +722,18 @@
         }
       }
 
+      function updateActiveSlide(){
+        for(let i=0;i<slideEls.length;i++){
+          slideEls[i].classList.toggle('slide-active', i === currentIndex);
+        }
+      }
+
       function goTo(index){
         currentIndex = Math.max(0, Math.min(slides-1, index));
         track.classList.remove('dragging');
         track.style.transform = 'translateX(' + (-currentIndex*step) + 'px)';
         updateDots();
+        updateActiveSlide();
       }
 
       window.addEventListener('resize', layout);
