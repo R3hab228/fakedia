@@ -359,6 +359,79 @@
     border-radius:50%;
     background:#ff3b30;
   }
+  .carousel{
+    overflow:hidden;
+    width:100%;
+  }
+  .carousel-track{
+    display:flex;
+    transition:transform 0.38s cubic-bezier(0.32,0.72,0,1);
+  }
+  .carousel-track.dragging{
+    transition:none;
+  }
+  .carousel-slide{
+    flex:0 0 100%;
+    width:100%;
+  }
+  .tax-id-block{
+    padding:0 24px 18px;
+  }
+  .tax-label{
+    font-size:13px;
+    font-weight:700;
+    color:var(--text-dark);
+    margin-bottom:14px;
+  }
+  .tax-name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--text-dark);
+    text-transform:uppercase;
+    line-height:1.35;
+    margin-bottom:16px;
+  }
+  .tax-dob-label{
+    font-size:13px;
+    font-weight:650;
+    color:var(--text-dark);
+    margin-bottom:2px;
+  }
+  .tax-dob-value{
+    font-size:15px;
+    font-weight:600;
+    color:var(--text-dark);
+  }
+  .tax-bottom{
+    padding:20px 24px 26px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .tax-big-number{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:28px;
+    font-weight:700;
+    color:var(--text-dark);
+    letter-spacing:-0.5px;
+  }
+  .copy-btn{
+    background:none;
+    border:none;
+    padding:4px;
+    cursor:pointer;
+    color:var(--text-dark);
+    display:flex;
+    align-items:center;
+    flex-shrink:0;
+  }
+  .copy-btn svg{
+    width:20px;
+    height:20px;
+  }
   .dots{
     display:flex;
     justify-content:center;
@@ -370,115 +443,251 @@
     height:8px;
     border-radius:50%;
     background:#ffffff;
+    cursor:pointer;
+    opacity:0.55;
+    transition:opacity 0.2s ease;
   }
   .dots span.active{
-    background:#ffffff;
+    opacity:1;
   }
 </style>
 </head>
 <body>
 
   <div class="phone-frame">
-    <div class="flip-scene">
-      <div class="flip-inner" id="flipInner" onclick="handleCardClick(event)">
-        <div class="card card-face">
-          <div class="card-header">
-            <h1>єДокумент</h1>
-          </div>
+    <div class="carousel">
+      <div class="carousel-track" id="carouselTrack">
 
-          <div class="id-row">
-            <div class="photo" id="photoBox" onclick="event.stopPropagation(); window.__suppressFlip=true; document.getElementById('photoInput').click(); setTimeout(function(){window.__suppressFlip=false;}, 800);">фото</div>
-            <input type="file" id="photoInput" accept="image/*" style="display:none">
-            <script>
-              document.getElementById('photoInput').addEventListener('change', function(e){
-                const file = e.target.files[0];
-                if(!file) return;
-                const reader = new FileReader();
-                reader.onload = function(ev){
-                  const box = document.getElementById('photoBox');
-                  box.style.backgroundImage = 'url(' + ev.target.result + ')';
-                  box.textContent = '';
-                };
-                reader.readAsDataURL(file);
-              });
-              function restrictRnokpp(el){
-                const digitsOnly = el.textContent.replace(/\D/g,'').slice(0,10);
-                if(el.textContent !== digitsOnly){
-                  el.textContent = digitsOnly;
-                  const range = document.createRange();
-                  const sel = window.getSelection();
-                  range.selectNodeContents(el);
-                  range.collapse(false);
-                  sel.removeAllRanges();
-                  sel.addRange(range);
-                }
-              }
-              function handleCardClick(e){
-                if(window.__suppressFlip) return;
-                if(e.target.closest('.photo, .more-btn, [contenteditable="true"], #fioText, .id-fields .value')) return;
-                document.getElementById('flipInner').classList.toggle('flipped');
-              }
-              function buildQr(){
-                const size = 25;
-                const cell = 400/size;
-                let svg = '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#ffffff"/>';
-                function finder(x,y){
-                  svg += `<rect x="${x}" y="${y}" width="${cell*7}" height="${cell*7}" fill="#000"/>`;
-                  svg += `<rect x="${x+cell}" y="${y+cell}" width="${cell*5}" height="${cell*5}" fill="#fff"/>`;
-                  svg += `<rect x="${x+cell*2}" y="${y+cell*2}" width="${cell*3}" height="${cell*3}" fill="#000"/>`;
-                }
-                for(let r=0;r<size;r++){
-                  for(let c=0;c<size;c++){
-                    const inFinderTL = r<7 && c<7;
-                    const inFinderTR = r<7 && c>=size-7;
-                    const inFinderBL = r>=size-7 && c<7;
-                    if(inFinderTL||inFinderTR||inFinderBL) continue;
-                    if(Math.random()>0.52){
-                      svg += `<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#000"/>`;
-                    }
-                  }
-                }
-                finder(0,0);
-                finder(400-cell*7,0);
-                finder(0,400-cell*7);
-                svg += '</svg>';
-                document.getElementById('qrContainer').innerHTML = svg;
-              }
-              buildQr();
-            </script>
-            <div class="id-fields">
-              <div class="label">Дата<br>народження:</div>
-              <div class="value" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">05.03.1998</div>
-              <div class="label">РНОКПП:</div>
-              <div class="value" id="rnokppField" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;" oninput="restrictRnokpp(this)">1234567890</div>
+        <div class="carousel-slide">
+          <div class="flip-scene">
+            <div class="flip-inner" id="flipInner1" onclick="handleCardClick(event,'flipInner1','.photo, .more-btn, [contenteditable=&quot;true&quot;], #fioText, .id-fields .value')">
+              <div class="card card-face">
+                <div class="card-header">
+                  <h1>єДокумент</h1>
+                </div>
+
+                <div class="id-row">
+                  <div class="photo" id="photoBox" onclick="event.stopPropagation(); window.__suppressFlip=true; document.getElementById('photoInput').click(); setTimeout(function(){window.__suppressFlip=false;}, 800);">фото</div>
+                  <input type="file" id="photoInput" accept="image/*" style="display:none">
+                  <div class="id-fields">
+                    <div class="label">Дата<br>народження:</div>
+                    <div class="value" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">05.03.1998</div>
+                    <div class="label">РНОКПП:</div>
+                    <div class="value" id="rnokppField" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;" oninput="restrictRnokpp(this)">1234567890</div>
+                  </div>
+                </div>
+
+                <div class="banner">
+                  <div class="banner-track"><span>Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася. А ми тую червону калину підіймемо, а ми нашу славну Україну, гей, гей, розвеселимо! Документ діє під час воєнного часу.</span><span>Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася. А ми тую червону калину підіймемо, а ми нашу славну Україну, гей, гей, розвеселимо! Документ діє під час воєнного часу.</span></div>
+                </div>
+
+                <div class="full-name">
+                  <h2 id="fioText" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">Приклад<br>Іван<br>Петрович</h2>
+                  <div class="more-btn" onclick="event.stopPropagation(); document.getElementById('optionsOverlay').classList.add('show')"><span></span><span></span><span></span></div>
+                </div>
+              </div>
+
+              <div class="card-back card-face">
+                <div class="qr-wrap" id="qrContainer1"></div>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="banner">
-            <div class="banner-track"><span>Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася. А ми тую червону калину підіймемо, а ми нашу славну Україну, гей, гей, розвеселимо! Документ діє під час воєнного часу.</span><span>Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася. А ми тую червону калину підіймемо, а ми нашу славну Україну, гей, гей, розвеселимо! Документ діє під час воєнного часу.</span></div>
-          </div>
+        <div class="carousel-slide">
+          <div class="flip-scene">
+            <div class="flip-inner" id="flipInner2" onclick="handleCardClick(event,'flipInner2','.more-btn, .copy-btn, [contenteditable=&quot;true&quot;]')">
+              <div class="card card-face">
+                <div class="card-header">
+                  <h1>Картка платника<br>податків</h1>
+                </div>
 
-          <div class="full-name">
-            <h2 id="fioText" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">Приклад<br>Іван<br>Петрович</h2>
-            <div class="more-btn" onclick="event.stopPropagation(); document.getElementById('optionsOverlay').classList.add('show')"><span></span><span></span><span></span></div>
+                <div class="tax-id-block">
+                  <div class="tax-label">РНОКПП</div>
+                  <div class="tax-name" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">Приклад<br>Іван<br>Петрович</div>
+                  <div class="tax-dob-label">Дата народження:</div>
+                  <div class="tax-dob-value" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">05.03.1998</div>
+                </div>
+
+                <div class="banner">
+                  <div class="banner-track"><span>Видано Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:35 | 16.09.2026&nbsp;•&nbsp;</span><span>Видано Державною податковою службою&nbsp;•&nbsp;Документ оновлено о 18:35 | 16.09.2026&nbsp;•&nbsp;</span></div>
+                </div>
+
+                <div class="tax-bottom">
+                  <div class="tax-big-number">
+                    <span id="taxRnokpp" ondblclick="this.contentEditable=true; this.focus();" onblur="this.contentEditable=false;">1234567890</span>
+                    <button class="copy-btn" onclick="event.stopPropagation(); copyTaxRnokpp(this);">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                    </button>
+                  </div>
+                  <div class="more-btn" onclick="event.stopPropagation(); document.getElementById('optionsOverlay').classList.add('show')"><span></span><span></span><span></span></div>
+                </div>
+              </div>
+
+              <div class="card-back card-face">
+                <div class="qr-wrap" id="qrContainer2"></div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card-back card-face">
-          <div class="qr-wrap" id="qrContainer"></div>
-        </div>
       </div>
     </div>
 
-    <div class="dots">
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
+    <div class="dots" id="dotsRow">
+      <span class="active" data-idx="0"></span>
+      <span data-idx="1"></span>
+      <span data-idx="2"></span>
+      <span data-idx="3"></span>
+      <span data-idx="4"></span>
+      <span data-idx="5"></span>
     </div>
   </div>
+
+  <script>
+    document.getElementById('photoInput').addEventListener('change', function(e){
+      const file = e.target.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev){
+        const box = document.getElementById('photoBox');
+        box.style.backgroundImage = 'url(' + ev.target.result + ')';
+        box.textContent = '';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function restrictRnokpp(el){
+      const digitsOnly = el.textContent.replace(/\D/g,'').slice(0,10);
+      if(el.textContent !== digitsOnly){
+        el.textContent = digitsOnly;
+        const range = document.createRange();
+        const sel = window.getSelection();
+        range.selectNodeContents(el);
+        range.collapse(false);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+
+    function handleCardClick(e, flipId, ignoreSelector){
+      if(window.__suppressFlip) return;
+      if(ignoreSelector && e.target.closest(ignoreSelector)) return;
+      document.getElementById(flipId).classList.toggle('flipped');
+    }
+
+    function buildQr(containerId){
+      const size = 25;
+      const cell = 400/size;
+      let svg = '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="400" fill="#ffffff"/>';
+      function finder(x,y){
+        svg += `<rect x="${x}" y="${y}" width="${cell*7}" height="${cell*7}" fill="#000"/>`;
+        svg += `<rect x="${x+cell}" y="${y+cell}" width="${cell*5}" height="${cell*5}" fill="#fff"/>`;
+        svg += `<rect x="${x+cell*2}" y="${y+cell*2}" width="${cell*3}" height="${cell*3}" fill="#000"/>`;
+      }
+      for(let r=0;r<size;r++){
+        for(let c=0;c<size;c++){
+          const inFinderTL = r<7 && c<7;
+          const inFinderTR = r<7 && c>=size-7;
+          const inFinderBL = r>=size-7 && c<7;
+          if(inFinderTL||inFinderTR||inFinderBL) continue;
+          if(Math.random()>0.52){
+            svg += `<rect x="${c*cell}" y="${r*cell}" width="${cell}" height="${cell}" fill="#000"/>`;
+          }
+        }
+      }
+      finder(0,0);
+      finder(400-cell*7,0);
+      finder(0,400-cell*7);
+      svg += '</svg>';
+      document.getElementById(containerId).innerHTML = svg;
+    }
+    buildQr('qrContainer1');
+    buildQr('qrContainer2');
+
+    function copyTaxRnokpp(btn){
+      const text = document.getElementById('taxRnokpp').textContent.trim();
+      const icon = btn.innerHTML;
+      const done = function(){
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12l5 5L20 6"/></svg>';
+        setTimeout(function(){ btn.innerHTML = icon; }, 1200);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(done);
+      } else {
+        done();
+      }
+    }
+
+    // Swipeable carousel
+    (function(){
+      const track = document.getElementById('carouselTrack');
+      const slides = track.children.length;
+      const dots = document.getElementById('dotsRow').children;
+      let currentIndex = 0;
+      let startX = 0;
+      let currentTranslate = 0;
+      let dragging = false;
+      let trackWidth = track.parentElement.offsetWidth;
+
+      function updateDots(){
+        for(let i=0;i<dots.length;i++){
+          dots[i].classList.toggle('active', i === currentIndex);
+        }
+      }
+
+      function goTo(index){
+        currentIndex = Math.max(0, Math.min(slides-1, index));
+        track.classList.remove('dragging');
+        track.style.transform = 'translateX(' + (-currentIndex*trackWidth) + 'px)';
+        updateDots();
+      }
+
+      window.addEventListener('resize', function(){
+        trackWidth = track.parentElement.offsetWidth;
+        goTo(currentIndex);
+      });
+
+      for(let i=0;i<dots.length;i++){
+        dots[i].addEventListener('click', function(){
+          if(i < slides) goTo(i);
+        });
+      }
+
+      function onStart(x){
+        dragging = true;
+        startX = x;
+        track.classList.add('dragging');
+      }
+      function onMove(x){
+        if(!dragging) return;
+        const delta = x - startX;
+        currentTranslate = -currentIndex*trackWidth + delta;
+        track.style.transform = 'translateX(' + currentTranslate + 'px)';
+      }
+      function onEnd(x){
+        if(!dragging) return;
+        dragging = false;
+        const delta = x - startX;
+        if(Math.abs(delta) > trackWidth*0.18){
+          goTo(currentIndex + (delta < 0 ? 1 : -1));
+        } else {
+          goTo(currentIndex);
+        }
+      }
+
+      track.addEventListener('touchstart', function(e){ onStart(e.touches[0].clientX); }, {passive:true});
+      track.addEventListener('touchmove', function(e){ onMove(e.touches[0].clientX); }, {passive:true});
+      track.addEventListener('touchend', function(e){ onEnd(e.changedTouches[0].clientX); });
+
+      let mouseDown = false;
+      track.addEventListener('mousedown', function(e){ mouseDown = true; onStart(e.clientX); });
+      window.addEventListener('mousemove', function(e){ if(mouseDown) onMove(e.clientX); });
+      window.addEventListener('mouseup', function(e){ if(mouseDown){ mouseDown=false; onEnd(e.clientX); } });
+
+      goTo(0);
+    })();
+  </script>
 
   <div class="overlay" id="optionsOverlay" onclick="if(event.target===this) this.classList.remove('show')">
     <div class="sheet-wrap">
