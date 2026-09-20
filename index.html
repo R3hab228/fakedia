@@ -14,7 +14,51 @@
 <meta name="apple-mobile-web-app-title" content="єДокумент">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-tap-highlight" content="no">
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Regular.otf" as="font" type="font/otf" crossorigin>
+<link rel="preload" href="https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Bold.otf" as="font" type="font/otf" crossorigin>
 <style>
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Thin.otf') format('opentype');
+    font-weight:100;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-UltraLight.otf') format('opentype');
+    font-weight:200;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Light.otf') format('opentype');
+    font-weight:300;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Regular.otf') format('opentype');
+    font-weight:400;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Medium.otf') format('opentype');
+    font-weight:500 650;
+    font-style:normal;
+    font-display:swap;
+  }
+  @font-face{
+    font-family:'e-Ukraine';
+    src:url('https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Bold.otf') format('opentype');
+    font-weight:700 900;
+    font-style:normal;
+    font-display:swap;
+  }
   :root{
     --card-bg:#eceaf5;
     --card-bg-2:#e3e0f2;
@@ -46,7 +90,7 @@
     user-select:text;
   }
   body{
-    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+    font-family:'e-Ukraine', 'Segoe UI', Roboto, Arial, sans-serif;
     background:linear-gradient(-45deg,
       #c9c2f0, #a7c9ec, #f4d9c6, #fbe98f, #f0c6d9, #c2e0f0, #c9c2f0);
     background-size:400% 400%;
